@@ -1,23 +1,13 @@
-package main
+package router
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/jaaaaaaaaaam/go-todo/models"
 )
-
-func main() {
-
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", Index)
-	router.HandleFunc("/todos", TodoIndex)
-	router.HandleFunc("/todos/{todoID}", TodoShow)
-
-	log.Fatal(http.ListenAndServe(":8080", router))
-
-}
 
 // Index shows the index
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +16,14 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 // TodoIndex shows the todo-list
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Todo Index!")
+	todos := todo.Todos{
+		todo.Todo{Name: "Learn Golang"},
+		todo.Todo{Name: "Write some awesome code"},
+	}
+
+	if err := json.NewEncoder(w).Encode(todos); err != nil {
+		panic(err)
+	}
 }
 
 // TodoShow shows a single todo
